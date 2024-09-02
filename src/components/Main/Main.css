@@ -3,6 +3,9 @@
     min-height: 100vh;
     padding-bottom: 15vh;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .main .nav {
@@ -12,6 +15,8 @@
     font-size: 22px;
     padding: 20px;
     color: #585858;
+    width: 100%;
+    max-width: 900px;
 }
 
 .main .nav img {
@@ -20,6 +25,7 @@
 }
 
 .main-container {
+    width: 100%;
     max-width: 900px;
     margin-top: auto;
 }
@@ -34,7 +40,7 @@
 
 .main .greet span {
     background: -webkit-linear-gradient(16deg,#4b90ff,#ff5546);
-    -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -176,4 +182,20 @@
     font-size: 17px;
     font-weight: 300;
     line-height: 1.8;
+}
+
+@media (max-width:600px) {
+    .main-bottom input{
+        flex: none;
+        width: 150px;
+    }
+    .main-bottom img {
+        width: 20px;
+    }
+    .search-box {
+        padding: 5px 10px;
+    }
+    .search-box div {
+        gap: 5px;
+    }
 }
