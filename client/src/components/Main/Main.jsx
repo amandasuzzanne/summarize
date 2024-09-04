@@ -1,11 +1,28 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import './Main.css'
 import { assets } from '../../assets/assets'
 import { Context } from '../../context/Context'
+import axios from 'axios';   // Making API requests
 
 const Main = () => {
 
     const { onSent, recentPrompt, showResult, loading, resultData, setInput, input } = useContext(Context)
+    const [isSaved, setIsSaved] = useState(false); // Track if the summary is saved
+
+
+    // Function to handle saving the summary
+    const handleSave = async () => {
+        try {
+            const response = await axios.post('/api/saveSummary', {
+                documentId: recentPrompt, // Assuming recentPrompt is like a document ID or title
+                summaryText: resultData
+            });
+            setIsSaved(true);
+            console.log('Summary saved successfully:', response.data);
+        } catch (error) {
+            console.error('Error saving summary:', error);
+        }
+    };
 
     return (
         <div className='main'>
@@ -48,14 +65,21 @@ const Main = () => {
                         <div className="result-data">
                             <img src={assets.gemini_icon} alt="" />
                             {!loading
-                                ? <p dangerouslySetInnerHTML={{ __html: resultData }} />
+                                ? <div>
+                                    <p dangerouslySetInnerHTML={{ __html: resultData }} />
+                                    {!isSaved && (
+                                        <button onClick={handleSave} className="save-btn">
+                                            Save
+                                        </button>
+                                    )}
+                                    {isSaved && <p>Saved successfully!</p>}
+                                </div>
                                 : <div className='loader'>
                                     <hr />
                                     <hr />
                                     <hr />
                                 </div>
                             }
-
                         </div>
                     </div>
                 }
