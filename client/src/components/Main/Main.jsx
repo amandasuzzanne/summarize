@@ -8,6 +8,7 @@ const Main = () => {
 
     const { onSent, recentPrompt, showResult, loading, resultData, setInput, input } = useContext(Context)
     const [isSaved, setIsSaved] = useState(false); // Track if the summary is saved
+    const [selectedFile, setSelectedFile] = useState(null); // Track the selected file
 
 
     // Function to handle saving the summary
@@ -24,12 +25,35 @@ const Main = () => {
         }
     };
 
+
+    // Function to handle file selection
+    const handleFileChange = (event) => {
+        setSelectedFile(event.target.files[0]);
+    };
+
+    // Function to handle file upload
+    const handleFileUpload = async () => {
+        if (!selectedFile) return;
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+
+        try {
+            const response = await axios.post('/api/uploadFile', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            console.log('File uploaded successfully:', response.data);
+            // Handle response and update state if needed
+        } catch (error) {
+            console.error('Error uploading file:', error);
+        }
+    };
+
+
     return (
         <div className='main'>
-            {/* <div className="nav">
-                <p>Summarize</p>
-                <img src={assets.user_icon} alt="" />
-            </div> */}
             <div className="main-container">
 
                 {!showResult
@@ -38,24 +62,6 @@ const Main = () => {
                             <div><span>Hello</span></div>
                             <p>How can I help you today?</p>
                         </div>
-                        {/* <div className="cards">
-                            <div className="card">
-                                <p>Suggest beautiful places to see on an upcoming road trip</p>
-                                <img src={assets.compass_icon} alt="" />
-                            </div>
-                            <div className="card">
-                                <p>Briefly summarize this concept: urban planning</p>
-                                <img src={assets.bulb_icon} alt="" />
-                            </div>
-                            <div className="card">
-                                <p>Brainstorm team building activities for our work retreat</p>
-                                <img src={assets.message_icon} alt="" />
-                            </div>
-                            <div className="card">
-                                <p>Improve the readbility of the following code</p>
-                                <img src={assets.code_icon} alt="" />
-                            </div>
-                        </div> */}
                     </>
                     : <div className='result'>
                         <div className="result-title">
@@ -88,9 +94,15 @@ const Main = () => {
                     <div className="search-box">
                         <input onChange={(e) => setInput(e.target.value)} value={input} type="text" placeholder='Enter a prompt here' />
                         <div>
-                            <img src={assets.gallery_icon} alt="" />
-                            <img src={assets.mic_icon} alt="" />
-                            {input?<img onClick={() => onSent()} src={assets.send_icon} alt="" />:null}
+                            <input
+                                type="file" id="fileUpload" style={{ display: 'none' }} onChange={handleFileChange}
+                            />
+                            <label htmlFor="fileUpload">
+                                <img
+                                    src={assets.gallery_icon} alt="Upload" onClick={() => document.getElementById('fileUpload').click()}
+                                />
+                            </label>
+                            {input ? <img onClick={() => onSent()} src={assets.send_icon} alt="" /> : null}
                         </div>
                     </div>
                     <p className="bottom-info">
