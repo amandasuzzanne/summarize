@@ -14,9 +14,9 @@ const Main = () => {
     // Function to handle saving the summary
     const handleSave = async () => {
         try {
-            const response = await axios.post('/api/saveSummary', {
-                documentId: recentPrompt, // Assuming recentPrompt is like a document ID or title
-                summaryText: resultData
+            const response = await axios.post('http://localhost:5000/api/summaries', {
+                summary_text: resultData,
+                original_text: recentPrompt // or any identifier for the original text
             });
             setIsSaved(true);
             console.log('Summary saved successfully:', response.data);
@@ -28,29 +28,29 @@ const Main = () => {
 
     // Function to handle file selection
     const handleFileChange = (event) => {
-        setSelectedFile(event.target.files[0]);
+        const file = event.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+            handleFileUpload(file); // Call file upload immediately after file is selected
+        }
     };
 
     // Function to handle file upload
-    const handleFileUpload = async () => {
-        if (!selectedFile) return;
-
+    const handleFileUpload = async (file) => {
         const formData = new FormData();
-        formData.append('file', selectedFile);
+        formData.append('file', file);
 
         try {
             const response = await axios.post('/api/uploadFile', formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
+                    'Content-Type': 'multipart/form-data',
+                },
             });
             console.log('File uploaded successfully:', response.data);
-            // Handle response and update state if needed
         } catch (error) {
             console.error('Error uploading file:', error);
         }
     };
-
 
     return (
         <div className='main'>
