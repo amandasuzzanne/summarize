@@ -1,31 +1,30 @@
-import React, { useContext, useState } from 'react';
-import './Main.css';
-import { assets } from '../../assets/assets';
-import { Context } from '../../context/Context';
+import React, { useContext, useState } from 'react'
+import './Main.css'
+import { assets } from '../../assets/assets'
+import { Context } from '../../context/Context'
 import axios from 'axios';   // Making API requests
 
 const Main = () => {
-    const { onSent, recentPrompt, showResult, loading, resultData, setInput, input } = useContext(Context);
+
+    const { onSent, recentPrompt, showResult, loading, resultData, setInput, input } = useContext(Context)
     const [isSaved, setIsSaved] = useState(false); // Track if the summary is saved
     const [selectedFile, setSelectedFile] = useState(null); // Track the selected file
+
 
     // Function to handle saving the summary
     const handleSave = async () => {
         try {
             const response = await axios.post('http://localhost:5000/api/summaries', {
                 summary_text: resultData,
-                original_text: recentPrompt // Sending original text along with summary
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',  // Explicitly set content type
-                }
+                original_text: recentPrompt // or any identifier for the original text
             });
             setIsSaved(true);
             console.log('Summary saved successfully:', response.data);
         } catch (error) {
-            console.error('Error saving summary:', error.response ? error.response.data : error.message);
+            console.error('Error saving summary:', error);
         }
     };
+
 
     // Function to handle file selection
     const handleFileChange = (event) => {
@@ -42,20 +41,21 @@ const Main = () => {
         formData.append('file', file);
 
         try {
-            const response = await axios.post('http://localhost:5000/api/uploadFile', formData, {
+            const response = await axios.post('/api/uploadFile', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
             console.log('File uploaded successfully:', response.data);
         } catch (error) {
-            console.error('Error uploading file:', error.response ? error.response.data : error.message);
+            console.error('Error uploading file:', error);
         }
     };
 
     return (
         <div className='main'>
             <div className="main-container">
+
                 {!showResult
                     ? <>
                         <div className="greet">
@@ -102,7 +102,7 @@ const Main = () => {
                                     src={assets.gallery_icon} alt="Upload" onClick={() => document.getElementById('fileUpload').click()}
                                 />
                             </label>
-                            {input ? <img onClick={() => onSent()} src={assets.send_icon} alt="Send" /> : null}
+                            {input ? <img onClick={() => onSent()} src={assets.send_icon} alt="" /> : null}
                         </div>
                     </div>
                     <p className="bottom-info">
@@ -111,7 +111,7 @@ const Main = () => {
                 </div>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default Main;
+export default Main
