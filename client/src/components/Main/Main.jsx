@@ -108,6 +108,11 @@ const Main = () => {
                 }
 
                 <div className="main-bottom">
+                    {selectedFile && (
+                        <div className="selected-file">
+                            <p>Uploaded PDF: {selectedFile.name}</p>
+                        </div>
+                    )}
                     <div className="search-box">
                         <input onChange={(e) => setInput(e.target.value)} value={input} type="text" placeholder='Enter a prompt here' />
                         <div>
