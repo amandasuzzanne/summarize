@@ -101,7 +101,7 @@ const Main = () => {
                         </div>
                     )}
                     <div className="search-box">
-                        <input onChange={(e) => setInput(e.target.value)} value={input} type="text" placeholder='Enter a prompt here' />
+                        <textarea onChange={(e) => setInput(e.target.value)} value={input} type="text" placeholder='Enter a prompt here' rows="5"/>
                         <div>
                             <input
                                 type="file" id="fileUpload" style={{ display: 'none' }} accept="application/pdf" onChange={handleFileUpload}
