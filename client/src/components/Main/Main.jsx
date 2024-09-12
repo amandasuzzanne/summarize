@@ -3,6 +3,7 @@ import './Main.css'
 import { assets } from '../../assets/assets'
 import { Context } from '../../context/Context'
 import axios from 'axios';   // Making API requests
+import pdfToText from 'react-pdftotext'
 
 const Main = () => {
 
@@ -52,6 +53,22 @@ const Main = () => {
         }
     };
 
+    const extractText = (event) => {
+        const file = event.target.files[0]
+        if (file) {
+            setSelectedFile(file)
+            pdfToText(file)
+                .then(text => {
+                    setInput(text) // Set the extracted text to the input
+                })
+                .catch(error => {
+                    console.error("Failed to extract text from pdf:", error)
+                    setInput("Error: Failed to extract text from PDF")
+                })
+        }
+    }
+
+
     return (
         <div className='main'>
             <div className="main-container">
@@ -95,7 +112,7 @@ const Main = () => {
                         <input onChange={(e) => setInput(e.target.value)} value={input} type="text" placeholder='Enter a prompt here' />
                         <div>
                             <input
-                                type="file" id="fileUpload" style={{ display: 'none' }} onChange={handleFileChange}
+                                type="file" id="fileUpload" style={{ display: 'none' }} accept="application/pdf" onChange={extractText}
                             />
                             <label htmlFor="fileUpload">
                                 <img
