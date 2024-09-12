@@ -36,26 +36,10 @@ const Main = () => {
         }
     };
 
-    // Function to handle file upload
-    const handleFileUpload = async (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        try {
-            const response = await axios.post('/api/uploadFile', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            console.log('File uploaded successfully:', response.data);
-        } catch (error) {
-            console.error('Error uploading file:', error);
-        }
-    };
-
-    const extractText = (event) => {
+    // Function to handle file upload and text extraction 
+    const handleFileUpload = (event) => {
         const file = event.target.files[0]
-        if (file) {
+        if (file && file.type === 'application/pdf') {
             setSelectedFile(file)
             pdfToText(file)
                 .then(text => {
@@ -65,9 +49,12 @@ const Main = () => {
                     console.error("Failed to extract text from pdf:", error)
                     setInput("Error: Failed to extract text from PDF")
                 })
+        } else {
+            setSelectedFile(null)
+            setInput('')
+            alert('Please select a valid PDF file.')
         }
     }
-
 
     return (
         <div className='main'>
@@ -117,7 +104,7 @@ const Main = () => {
                         <input onChange={(e) => setInput(e.target.value)} value={input} type="text" placeholder='Enter a prompt here' />
                         <div>
                             <input
-                                type="file" id="fileUpload" style={{ display: 'none' }} accept="application/pdf" onChange={extractText}
+                                type="file" id="fileUpload" style={{ display: 'none' }} accept="application/pdf" onChange={handleFileUpload}
                             />
                             <label htmlFor="fileUpload">
                                 <img
