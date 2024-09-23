@@ -2,26 +2,40 @@ const express = require('express');
 const router = express.Router();
 const connection = require('../db'); // Import the database connection
 
+
 router.post('/', (req, res) => {
     try {
-        const { summary_text, original_text } = req.body;
+        const { summary_text, original_text, file_name, file_path } = req.body;
+        console.log('Request body:', req.body);  // Log the request body
+
         if (!summary_text || !original_text) {
             return res.status(400).json({ message: 'Missing summary_text or original_text' });
         }
 
-        const query = 'INSERT INTO summaries (summary_text, original_text) VALUES (?, ?)';
-        connection.query(query, [summary_text, original_text], (err, result) => {
+        let query = 'INSERT INTO summaries (summary_text, original_text';
+        let values = [summary_text, original_text];
+
+        if (file_name && file_path) {
+            console.log('File name and path received:', file_name, file_path);  // Log the file details
+            query += ', file_name, file_path) VALUES (?, ?, ?, ?)';
+            values.push(file_name, file_path);
+        } else {
+            query += ') VALUES (?, ?)';
+        }
+
+        connection.query(query, values, (err, result) => {
             if (err) {
-                console.error('Database error:', err); // Log database errors
+                console.error('Database error:', err);  // Log database errors
                 return res.status(500).json({ message: 'Error creating summary' });
             }
             res.status(201).json({ message: 'Summary added successfully', id: result.insertId });
         });
     } catch (error) {
-        console.error('Server error:', error); // Log server errors
+        console.error('Server error:', error);  // Log server errors
         res.status(500).json({ message: 'Server error' });
-    }
+    }      
 });
+
 
 // READ: Get all summaries
 router.get('/', (req, res) => {
