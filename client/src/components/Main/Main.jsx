@@ -10,15 +10,26 @@ const Main = () => {
     const { onSent, recentPrompt, showResult, loading, resultData, setInput, input } = useContext(Context)
     const [isSaved, setIsSaved] = useState(false); // Track if the summary is saved
     const [selectedFile, setSelectedFile] = useState(null); // Track the selected file
+    const [fileName, setFileName] = useState('');
+    const [filePath, setFilePath] = useState('');
 
-
+    
     // Function to handle saving the summary
     const handleSave = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/api/summaries', {
+            const payload = {
                 summary_text: resultData,
-                original_text: recentPrompt // or any identifier for the original text
-            });
+                original_text: recentPrompt, 
+                file_name: fileName,
+                file_path: filePath
+            };
+
+            if (selectedFile) {
+                // Add file details if a file is selected
+                payload.file_name = selectedFile.name;
+                payload.file_path = `/uploads/${selectedFile.name}`; 
+            }
+            const response = await axios.post('http://localhost:5000/api/summaries', payload);
             setIsSaved(true);
             console.log('Summary saved successfully:', response.data);
         } catch (error) {
@@ -36,11 +47,13 @@ const Main = () => {
         }
     };
 
+
     // Function to handle file upload and text extraction 
-    const handleFileUpload = (event) => {
-        const file = event.target.files[0]
+    const handleFileUpload = async (event) => {
+        const file = event.target.files[0];
         if (file && file.type === 'application/pdf') {
-            setSelectedFile(file)
+            setSelectedFile(file);
+
             pdfToText(file)
                 .then(text => {
                     setInput(text) // Set the extracted text to the input
@@ -49,12 +62,28 @@ const Main = () => {
                     console.error("Failed to extract text from pdf:", error)
                     setInput("Error: Failed to extract text from PDF")
                 })
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                // Send the file to the server
+                const response = await axios.post('http://localhost:5000/api/process-file', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error uploading file:', error);
+            }
         } else {
-            setSelectedFile(null)
-            setInput('')
-            alert('Please select a valid PDF file.')
+            setSelectedFile(null);
+            setInput('');
+            alert('Please select a valid PDF file.');
         }
-    }
+    };
+
 
     return (
         <div className='main'>
@@ -101,7 +130,7 @@ const Main = () => {
                         </div>
                     )}
                     <div className="search-box">
-                        <textarea onChange={(e) => setInput(e.target.value)} value={input} type="text" placeholder='Enter a prompt here' rows="5"/>
+                        <textarea onChange={(e) => setInput(e.target.value)} value={input} type="text" placeholder='Enter a prompt here' rows="5" />
                         <div>
                             <input
                                 type="file" id="fileUpload" style={{ display: 'none' }} accept="application/pdf" onChange={handleFileUpload}
