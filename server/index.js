@@ -13,7 +13,6 @@ const app = express();
 // Middleware
 app.use(cors({
     origin: 'http://localhost:5173',
-    methods: 'GET,POST,PUT,DELETE',
     credentials: true
 }));
 app.use(express.json()); // Use express's built-in JSON parser
@@ -25,3 +24,24 @@ app.use('/api', processFileRoutes);
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const express = require('express');
+// const app = express();
+// app.get('/', (req, res) => {
+//     res.send('Simple API homepage');
+// })
+// app.listen(5000, () => {
+//     console.log("Server running on port 5000");
+// })

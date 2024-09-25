@@ -5,7 +5,7 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
-// const app = express();
+const app = express();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -61,10 +61,10 @@ router.post('/process-file', upload.single('file'), async (req, res) => {
   }
 });
 
-// Start the Express server
-const PORT = 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+// // Start the Express server
+// const PORT = 5000;
+// app.listen(PORT, () => {
+//   console.log(`Server is running on http://localhost:${PORT}`);
+// });
 
 module.exports = router;
