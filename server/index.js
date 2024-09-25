@@ -11,8 +11,9 @@ const processFileRoutes = require('./api/process-file');
 const app = express();       
 
 // Middleware
+const CLIENT_URL = process.env.CLIENT_URL;
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: CLIENT_URL,
     credentials: true
 }));
 app.use(express.json()); // Use express's built-in JSON parser
@@ -24,24 +25,3 @@ app.use('/api', processFileRoutes);
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const express = require('express');
-// const app = express();
-// app.get('/', (req, res) => {
-//     res.send('Simple API homepage');
-// })
-// app.listen(5000, () => {
-//     console.log("Server running on port 5000");
-// })

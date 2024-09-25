@@ -5,6 +5,8 @@ import { Context } from '../../context/Context'
 import axios from 'axios';   // Making API requests
 import pdfToText from 'react-pdftotext'
 
+const API_URL = process.env.API_URL;
+
 const Main = () => {
 
     const { onSent, recentPrompt, showResult, loading, resultData, setInput, input } = useContext(Context)
@@ -29,7 +31,7 @@ const Main = () => {
                 payload.file_name = selectedFile.name;
                 payload.file_path = `/uploads/${selectedFile.name}`; 
             }
-            const response = await axios.post('http://localhost:5000/api/summaries', payload);
+            const response = await axios.post(API_URL + '/summaries', payload);
             setIsSaved(true);
             console.log('Summary saved successfully:', response.data);
         } catch (error) {
@@ -68,7 +70,7 @@ const Main = () => {
 
             try {
                 // Send the file to the server
-                const response = await axios.post('http://localhost:5000/api/process-file', formData, {
+                const response = await axios.post(API_URL + '/process-file', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
