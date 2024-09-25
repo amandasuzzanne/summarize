@@ -5,10 +5,9 @@ import { Context } from '../../context/Context'
 import axios from 'axios';   // Making API requests
 import pdfToText from 'react-pdftotext'
 
-const API_URL = process.env.API_URL;
+const API_URL = `${import.meta.env.VITE_REACT_APP_API}`;
 
 const Main = () => {
-
     const { onSent, recentPrompt, showResult, loading, resultData, setInput, input } = useContext(Context)
     const [isSaved, setIsSaved] = useState(false); // Track if the summary is saved
     const [selectedFile, setSelectedFile] = useState(null); // Track the selected file
